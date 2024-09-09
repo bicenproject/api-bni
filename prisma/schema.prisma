@@ -1,0 +1,189 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id_user                Int       @id @default(autoincrement())
+  id_role                Int?      @unique
+  role                   Role?     @relation(fields: [id_role], references: [id_role], onDelete: Cascade, onUpdate: Cascade)
+  id_wilayah             Int?      @unique
+  wilayah                Wilayah?  @relation(fields: [id_wilayah], references: [id_wilayah], onDelete: Cascade, onUpdate: Cascade)
+  id_vendor              Int?      @unique
+  vendor                 Vendor?   @relation(fields: [id_vendor], references: [id_vendor], onDelete: Cascade, onUpdate: Cascade)
+  id_wilayah_vendor      Int
+  vendor_type            String    @db.VarChar(255)
+  username               String    @db.VarChar(255)
+  email                  String    @unique @db.VarChar(255)
+  npp                    String    @db.VarChar(255)
+  dob                    DateTime  @db.Date
+  password               String    @db.Text
+  token                  String?   @db.VarChar(max)
+  refreshToken           String?   @db.VarChar(max)
+  refreshTokenExpiryTime DateTime? @db.DateTime
+  device_id              String?   @db.VarChar(255)
+  created_at             DateTime  @db.DateTime
+  updated_at             DateTime  @db.DateTime
+  created_by             Int
+  updated_by             Int
+  deleted_at             DateTime? @db.DateTime
+  isVerified             Boolean   @db.Bit
+}
+
+model Group_Wilayah {
+  id_group   Int       @id @default(autoincrement())
+  name_group String    @db.VarChar(255)
+  created_by Int
+  updated_by Int
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now())
+  deleted_at DateTime? @default(now())
+
+  Wilayah Wilayah[]
+}
+
+model Vendor {
+  id_vendor   Int       @id @default(autoincrement())
+  name        String    @db.VarChar(255)
+  code        String    @db.VarChar(255)
+  description String?   @db.Text
+  created_by  Int
+  updated_by  Int
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @default(now())
+  deleted_at  DateTime? @default(now())
+
+  User User[]
+}
+
+model Wilayah {
+  id_wilayah    Int            @id @default(autoincrement())
+  id_group      Int?           @unique
+  group_wilayah Group_Wilayah? @relation(fields: [id_group], references: [id_group], onDelete: Cascade, onUpdate: Cascade)
+  name          String         @db.VarChar(255)
+  code          String         @db.VarChar(255)
+  description   String?        @db.Text
+  created_by    Int
+  updated_by    Int
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @default(now())
+  deleted_at    DateTime?      @default(now())
+
+  User User[]
+}
+
+model Role {
+  id_role     Int       @id @default(autoincrement())
+  name        String    @db.VarChar(255)
+  type        String    @db.VarChar(255)
+  description String?   @db.VarChar(255)
+  created_by  Int
+  updated_by  Int
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @default(now())
+  deleted_at  DateTime? @default(now())
+
+  Menu_Role Menu_Role[]
+
+  Role_Action Role_Action[]
+
+  User User[]
+}
+
+model Role_Action {
+  id_role_action Int          @id @default(autoincrement())
+  id_role        Int?         @unique
+  role           Role?        @relation(fields: [id_role], references: [id_role], onDelete: Cascade, onUpdate: Cascade)
+  id_menu_action Int?         @unique
+  menu_action    Menu_Action? @relation(fields: [id_menu_action], references: [id_menu_action], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Menu {
+  id_menu     Int           @id @default(autoincrement())
+  name        String        @db.VarChar(255)
+  routh       String        @db.VarChar(255)
+  path        String        @db.VarChar(255)
+  api_path    String        @db.VarChar(255)
+  icon        String        @db.VarChar(255)
+  parent      Int
+  platform    String        @db.VarChar(255)
+  active      Int
+  order       Int
+  Menu_Action Menu_Action[]
+
+  MenuRole Menu_Role[]
+}
+
+model Menu_Action {
+  id_menu_action Int       @id @default(autoincrement())
+  id_menu        Int?      @unique
+  menu           Menu?     @relation(fields: [id_menu], references: [id_menu], onDelete: Cascade, onUpdate: Cascade)
+  name           String    @db.VarChar(255)
+  action         String    @db.VarChar(255)
+  isActive       Int       @db.Bit
+  created_by     Int
+  updated_by     Int
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @default(now())
+  deleted_at     DateTime? @default(now())
+
+  Role_Action Role_Action[]
+}
+
+model Menu_Role {
+  id_menu_role Int   @id @default(autoincrement())
+  id_menu      Int?  @unique
+  menu         Menu? @relation(fields: [id_menu], references: [id_menu], onDelete: Cascade, onUpdate: Cascade)
+  id_role      Int?  @unique
+  role         Role? @relation(fields: [id_role], references: [id_role], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model AuditTrail {
+  id           Int      @id @default(autoincrement())
+  Url          String   @db.VarChar(255)
+  ActionName   String   @db.VarChar(255)
+  MenuName     String   @db.VarChar(255)
+  DataBefore   String   @db.Text
+  DataAfter    String   @db.Text
+  UserName     String   @db.VarChar(255)
+  IpAddress    String   @db.VarChar(255)
+  ActivityDate DateTime
+  Browser      String   @db.VarChar(255)
+  OS           String   @db.VarChar(255)
+  AppSource    String   @db.VarChar(20)
+  created_by   Int
+  updated_by   Int
+  created_at   DateTime @default(now())
+  updated_at   DateTime @default(now())
+}
+
+model Merchant {
+  id_merchant  Int       @id @default(autoincrement())
+  mid          String    @db.VarChar(50)
+  kodewilayah  String    @db.VarChar(50)
+  merchantname String    @db.VarChar(100)
+  namanasabah  String    @db.VarChar(100)
+  contact      String    @db.VarChar(50)
+  phone        String    @db.VarChar(50)
+  kodecbg      String    @db.VarChar(50)
+  kategori     String    @db.VarChar(50)
+  address1     String?   @db.Text
+  address2     String?   @db.Text
+  address3     String?   @db.Text
+  address4     String?   @db.Text
+  created_by   Int
+  updated_by   Int
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @default(now())
+  deleted_at   DateTime? @db.DateTime()
+}
