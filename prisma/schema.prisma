@@ -15,12 +15,12 @@ datasource db {
 
 model User {
   id_user                Int       @id @default(autoincrement())
-  id_role                Int?      @unique
   role                   Role?     @relation(fields: [id_role], references: [id_role], onDelete: Cascade, onUpdate: Cascade)
-  id_wilayah             Int?      @unique
+  id_role                Int?      @unique
   wilayah                Wilayah?  @relation(fields: [id_wilayah], references: [id_wilayah], onDelete: Cascade, onUpdate: Cascade)
-  id_vendor              Int?      @unique
+  id_wilayah             Int?      @unique
   vendor                 Vendor?   @relation(fields: [id_vendor], references: [id_vendor], onDelete: Cascade, onUpdate: Cascade)
+  id_vendor              Int?      @unique
   id_wilayah_vendor      Int
   vendor_type            String    @db.VarChar(255)
   username               String    @db.VarChar(255)
@@ -68,8 +68,8 @@ model Vendor {
 
 model Wilayah {
   id_wilayah    Int            @id @default(autoincrement())
-  id_group      Int?           @unique
   group_wilayah Group_Wilayah? @relation(fields: [id_group], references: [id_group], onDelete: Cascade, onUpdate: Cascade)
+  id_group      Int?           @unique
   name          String         @db.VarChar(255)
   code          String         @db.VarChar(255)
   description   String?        @db.Text
@@ -102,10 +102,10 @@ model Role {
 
 model Role_Action {
   id_role_action Int          @id @default(autoincrement())
-  id_role        Int?         @unique
   role           Role?        @relation(fields: [id_role], references: [id_role], onDelete: Cascade, onUpdate: Cascade)
-  id_menu_action Int?         @unique
+  id_role        Int?         @unique
   menu_action    Menu_Action? @relation(fields: [id_menu_action], references: [id_menu_action], onDelete: Cascade, onUpdate: Cascade)
+  id_menu_action Int?         @unique
 }
 
 model Menu {
@@ -126,8 +126,8 @@ model Menu {
 
 model Menu_Action {
   id_menu_action Int       @id @default(autoincrement())
-  id_menu        Int?      @unique
   menu           Menu?     @relation(fields: [id_menu], references: [id_menu], onDelete: Cascade, onUpdate: Cascade)
+  id_menu        Int?      @unique
   name           String    @db.VarChar(255)
   action         String    @db.VarChar(255)
   isActive       Int       @db.Bit
@@ -142,10 +142,10 @@ model Menu_Action {
 
 model Menu_Role {
   id_menu_role Int   @id @default(autoincrement())
-  id_menu      Int?  @unique
   menu         Menu? @relation(fields: [id_menu], references: [id_menu], onDelete: Cascade, onUpdate: Cascade)
-  id_role      Int?  @unique
+  id_menu      Int?  @unique
   role         Role? @relation(fields: [id_role], references: [id_role], onDelete: Cascade, onUpdate: Cascade)
+  id_role      Int?  @unique
 }
 
 model AuditTrail {

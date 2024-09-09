@@ -5,7 +5,6 @@ import { PrismaModule } from './prisma/prisma.module';
 import { WilayahModule } from './wilayah/wilayah.module';
 import { VendorModule } from './vendor/vendor.module';
 import { MenuModule } from './menu/menu.module';
-import { MenuRoleModule } from './menu-role/menu-role.module';
 import { MerchantModule } from './merchant/merchant.module';
 
 @Module({

@@ -10,7 +10,6 @@ import {
   Put,
 } from '@nestjs/common';
 import { GroupWilayahService } from './group_wilayah.service';
-import { Group_Wilayah } from '@prisma/client';
 import { CreateGroupWilayahDto, UpdateGroupWilayahDto } from './dtos/group.dto';
 
 @Controller('api')
@@ -42,7 +41,7 @@ export class GroupWilayahController {
   }
 
   @Post('getGrupWilayah/create')
-  async createTask(@Body() data: CreateGroupWilayahDto) {
+  async createGroup_Wilayah(@Body() data: CreateGroupWilayahDto) {
     const create =
       await this.group_getAllGroup_Wilayahervice.createGroup_Wilayah(data);
     return {
