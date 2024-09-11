@@ -25,7 +25,7 @@ import { CreateVendorDto, UpdateVendorDto } from './dtos/vendor.dto';
         await this.vendorService.getAllVendor();
       if (!data) throw new BadRequestException('Vendor does not exist');
       return {
-        message: 'Data Wilayah',
+        message: 'Data Vendor',
         ...data,
       };
     }

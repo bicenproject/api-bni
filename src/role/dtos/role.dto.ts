@@ -1,5 +1,13 @@
-
-import { IsString, IsInt, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsString,
+  IsInt,
+  IsOptional,
+  IsNumber,
+  IsNotEmpty,
+  ValidateNested,
+  IsArray,
+} from 'class-validator';
 
 export class CreateRoleDto {
   @IsString()
@@ -20,18 +28,47 @@ export class CreateRoleDto {
 }
 
 export class UpdateRoleDto {
+  @IsNumber()
   @IsOptional()
+  id_role?: number;
+
   @IsString()
+  @IsOptional()
   name?: string;
 
-  @IsOptional()
   @IsString()
+  @IsOptional()
   type?: string;
 
-  @IsOptional()
   @IsString()
+  @IsOptional()
   description?: string;
 
   @IsInt()
-  updated_by: number;
+  updated_by?: number;
 }
+
+export class RoleWithActionsDto {
+  @IsNotEmpty()
+  role: CreateRoleDto | UpdateRoleDto;
+
+  @IsNotEmpty()
+  selectedActions: number[];
+
+  @IsNotEmpty()
+  selectedMenus: number[];
+}
+
+export class UpdateRoleWithAccessDto {  
+  @ValidateNested()  
+  @Type(() => UpdateRoleDto)  
+  role: UpdateRoleDto;  
+
+  @IsArray()  
+  @IsNumber({}, { each: true })  
+  selectedMenus: number[];  
+
+  @IsArray()  
+  @IsNumber({}, { each: true })  
+  selectedActions: number[];  
+}  

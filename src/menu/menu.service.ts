@@ -10,6 +10,19 @@ export class MenuService {
   async getAllMenu(): Promise<Menu[]> {
     return this.prisma.menu.findMany();
   }
+  
+  async getAllMenuWithActions(): Promise<any> {
+    const menus = await this.prisma.menu.findMany();
+
+    const menuActions = await this.prisma.menu_Action.findMany();
+
+    const menusWithActions = menus.map(menu => ({
+      ...menu,
+      actions: menuActions.filter(action => action.id_menu === menu.id_menu)
+    }));
+
+    return menusWithActions;
+  }
 
   async getMenuById(id_menu: number): Promise<Menu> {
     return this.prisma.menu.findUnique({

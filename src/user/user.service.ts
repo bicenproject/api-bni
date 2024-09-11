@@ -1,4 +1,3 @@
-
 import { User } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { ConflictException, Injectable, BadRequestException } from "@nestjs/common";
@@ -46,7 +45,8 @@ export class UserService {
         },
       });
     } catch (error) {
-      throw new BadRequestException('Failed to create user');
+      console.error('Prisma error:', error);
+      throw new BadRequestException(`Failed to create user: ${error.message}`);
     }
   }
 }

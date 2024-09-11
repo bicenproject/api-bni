@@ -13,15 +13,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model User {
   id_user                Int       @id @default(autoincrement())
   role                   Role?     @relation(fields: [id_role], references: [id_role], onDelete: Cascade, onUpdate: Cascade)
-  id_role                Int?      @unique
+  id_role                Int?      
   wilayah                Wilayah?  @relation(fields: [id_wilayah], references: [id_wilayah], onDelete: Cascade, onUpdate: Cascade)
-  id_wilayah             Int?      @unique
+  id_wilayah             Int?      
   vendor                 Vendor?   @relation(fields: [id_vendor], references: [id_vendor], onDelete: Cascade, onUpdate: Cascade)
-  id_vendor              Int?      @unique
-  id_wilayah_vendor      Int
+  id_vendor              Int?      
+  id_wilayah_vendor      Int?
   vendor_type            String    @db.VarChar(255)
   username               String    @db.VarChar(255)
   email                  String    @unique @db.VarChar(255)
@@ -39,6 +40,7 @@ model User {
   deleted_at             DateTime? @db.DateTime
   isVerified             Boolean   @db.Bit
 }
+
 
 model Group_Wilayah {
   id_group   Int       @id @default(autoincrement())
@@ -69,7 +71,7 @@ model Vendor {
 model Wilayah {
   id_wilayah    Int            @id @default(autoincrement())
   group_wilayah Group_Wilayah? @relation(fields: [id_group], references: [id_group], onDelete: Cascade, onUpdate: Cascade)
-  id_group      Int?           @unique
+  id_group      Int?           
   name          String         @db.VarChar(255)
   code          String         @db.VarChar(255)
   description   String?        @db.Text
@@ -103,19 +105,19 @@ model Role {
 model Role_Action {
   id_role_action Int          @id @default(autoincrement())
   role           Role?        @relation(fields: [id_role], references: [id_role], onDelete: Cascade, onUpdate: Cascade)
-  id_role        Int?         @unique
+  id_role        Int?         
   menu_action    Menu_Action? @relation(fields: [id_menu_action], references: [id_menu_action], onDelete: Cascade, onUpdate: Cascade)
-  id_menu_action Int?         @unique
+  id_menu_action Int?        
 }
 
 model Menu {
   id_menu     Int           @id @default(autoincrement())
   name        String        @db.VarChar(255)
-  routh       String        @db.VarChar(255)
-  path        String        @db.VarChar(255)
-  api_path    String        @db.VarChar(255)
-  icon        String        @db.VarChar(255)
-  parent      Int
+  routh       String?       @db.VarChar(255)
+  path        String?       @db.VarChar(255)
+  api_path    String?       @db.VarChar(255)
+  icon        String?       @db.VarChar(255)
+  parent      Int?
   platform    String        @db.VarChar(255)
   active      Int
   order       Int
@@ -127,10 +129,10 @@ model Menu {
 model Menu_Action {
   id_menu_action Int       @id @default(autoincrement())
   menu           Menu?     @relation(fields: [id_menu], references: [id_menu], onDelete: Cascade, onUpdate: Cascade)
-  id_menu        Int?      @unique
+  id_menu        Int?      
   name           String    @db.VarChar(255)
   action         String    @db.VarChar(255)
-  isActive       Int       @db.Bit
+  isActive       Boolean   @db.Bit
   created_by     Int
   updated_by     Int
   created_at     DateTime  @default(now())
@@ -143,29 +145,31 @@ model Menu_Action {
 model Menu_Role {
   id_menu_role Int   @id @default(autoincrement())
   menu         Menu? @relation(fields: [id_menu], references: [id_menu], onDelete: Cascade, onUpdate: Cascade)
-  id_menu      Int?  @unique
+  id_menu      Int?  
   role         Role? @relation(fields: [id_role], references: [id_role], onDelete: Cascade, onUpdate: Cascade)
-  id_role      Int?  @unique
+  id_role      Int?  
 }
 
+
 model AuditTrail {
-  id           Int      @id @default(autoincrement())
-  Url          String   @db.VarChar(255)
-  ActionName   String   @db.VarChar(255)
-  MenuName     String   @db.VarChar(255)
-  DataBefore   String   @db.Text
-  DataAfter    String   @db.Text
-  UserName     String   @db.VarChar(255)
-  IpAddress    String   @db.VarChar(255)
-  ActivityDate DateTime
-  Browser      String   @db.VarChar(255)
-  OS           String   @db.VarChar(255)
-  AppSource    String   @db.VarChar(20)
-  created_by   Int
-  updated_by   Int
-  created_at   DateTime @default(now())
-  updated_at   DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  url         String   @db.VarChar(255)
+  actionName  String   @db.VarChar(255)
+  menuName    String   @db.VarChar(255)
+  dataBefore  String   @db.Text
+  dataAfter   String   @db.Text
+  userName    String   @db.VarChar(255)
+  ipAddress   String   @db.VarChar(255)
+  activityDate DateTime
+  browser     String   @db.VarChar(255)
+  os          String   @db.VarChar(255)
+  appSource   String   @db.VarChar(20)
+  createdBy   Int
+  updatedBy   Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
+
 
 model Merchant {
   id_merchant  Int       @id @default(autoincrement())

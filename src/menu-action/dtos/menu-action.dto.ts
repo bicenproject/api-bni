@@ -1,10 +1,9 @@
 
-import { IsString, IsInt, IsOptional } from 'class-validator';
+import { IsString, IsInt, IsOptional, IsBoolean } from 'class-validator';
 
 export class CreateMenuActionDto {
-  @IsOptional()
   @IsInt()
-  id_menu?: number;
+  id_menu: number;
 
   @IsString()
   name: string;
@@ -12,8 +11,8 @@ export class CreateMenuActionDto {
   @IsString()
   action: string;
 
-  @IsInt()
-  isActive: number;
+  @IsBoolean()
+  isActive: boolean;
 
   @IsInt()
   created_by: number;
@@ -36,8 +35,8 @@ export class UpdateMenuActionDto {
   action?: string;
 
   @IsOptional()
-  @IsInt()
-  isActive?: number;
+  @IsBoolean()
+  isActive?: boolean;
 
   @IsInt()
   updated_by: number;

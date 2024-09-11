@@ -55,7 +55,7 @@ export class RoleActionService {
   }
 
   private async validateGroupRole(id_menu_action: number): Promise<void> {
-    const groupRole = await this.prisma.role_Action.findUnique({
+    const groupRole = await this.prisma.role_Action.findFirst({
       where: { id_menu_action },
     });
     if (!groupRole) {

@@ -1,11 +1,7 @@
 
-import { IsString, IsInt, IsOptional, IsDateString } from 'class-validator';
+import { IsString, IsInt, IsOptional } from 'class-validator';
 
 export class UpdateWilayahDto {
-  @IsOptional()
-  @IsInt()
-  id_group?: number;
-
   @IsOptional()
   @IsString()
   name?: string;
@@ -20,9 +16,8 @@ export class UpdateWilayahDto {
 
   @IsOptional()
   @IsInt()
-  updated_by?: number;
+  id_group?: number;
 
-  @IsOptional()
-  @IsDateString()
-  deleted_at?: Date;
+  @IsInt()
+  updated_by: number;
 }

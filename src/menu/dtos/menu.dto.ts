@@ -1,33 +1,38 @@
 
-import { IsString, IsInt, IsOptional } from 'class-validator';
+import { IsString, IsInt, IsOptional, IsNotEmpty } from 'class-validator';
 
-export class CreateMenuDto {
-  @IsString()
-  name: string;
+export class CreateMenuDto {  
+  @IsString()  
+  name: string;  
 
-  @IsString()
-  routh: string;
+  @IsString()  
+  @IsOptional()  
+  routh?: string;  
 
-  @IsString()
-  path: string;
+  @IsString()  
+  @IsOptional()  
+  path?: string;  
 
-  @IsString()
-  api_path: string;
+  @IsString()  
+  @IsOptional()  
+  api_path?: string;  
 
-  @IsString()
-  icon: string;
+  @IsString()  
+  @IsOptional()  
+  icon?: string;  
 
-  @IsInt()
-  parent: number;
+  @IsInt()  
+  @IsOptional()  
+  parent?: number;  
 
-  @IsString()
-  platform: string;
+  @IsString()  
+  platform: string;  
 
-  @IsInt()
-  active: number;
+  @IsInt()  
+  active: number;  
 
-  @IsInt()
-  order: number;
+  @IsInt()  
+  order: number;  
 }
 
 export class UpdateMenuDto {
