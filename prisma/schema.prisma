@@ -151,23 +151,23 @@ model Menu_Role {
 }
 
 
-model AuditTrail {
-  id          Int      @id @default(autoincrement())
-  url         String   @db.VarChar(255)
-  actionName  String   @db.VarChar(255)
-  menuName    String   @db.VarChar(255)
-  dataBefore  String   @db.Text
-  dataAfter   String   @db.Text
-  userName    String   @db.VarChar(255)
-  ipAddress   String   @db.VarChar(255)
-  activityDate DateTime
-  browser     String   @db.VarChar(255)
-  os          String   @db.VarChar(255)
-  appSource   String   @db.VarChar(20)
-  createdBy   Int
-  updatedBy   Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model AuditTrail {  
+  id           Int      @id @default(autoincrement())  
+  url          String   @db.VarChar(255)  
+  actionName   String   @db.VarChar(255)  
+  menuName     String   @db.VarChar(255)  
+  dataBefore   String   @db.Text  
+  dataAfter    String   @db.Text  
+  userName     String   @db.VarChar(255)  
+  ipAddress    String   @db.VarChar(255)  
+  activityDate DateTime  
+  browser      String   @db.VarChar(255)  
+  os           String   @db.VarChar(255)  
+  appSource    String   @db.VarChar(20)  
+  createdBy    Int  
+  updatedBy    Int  
+  createdAt    DateTime @default(now())  
+  updatedAt    DateTime @updatedAt  
 }
 
 

@@ -1,5 +1,8 @@
-
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../user/user.service';
@@ -20,6 +23,12 @@ export class AuthService {
 
     const user = await this.prismaService.user.findUnique({
       where: { email },
+      select: {
+        id_user: true,
+        email: true,
+        password: true,
+        username: true,
+      },
     });
 
     if (!user) {
@@ -35,9 +44,13 @@ export class AuthService {
     const tokens = await this.getTokens(user.id_user, user.email);
     await this.updateRefreshToken(user.id_user, tokens.refreshToken);
 
-    return tokens;
+    return {
+      ...tokens,
+      userId: user.id_user,
+      username: user.username,
+    };
   }
-
+  
   async register(createDto: RegisterUsersDto): Promise<any> {
     const hashedPassword = await bcrypt.hash(createDto.password, 10);
 
@@ -68,7 +81,10 @@ export class AuthService {
       throw new UnauthorizedException('Access Denied');
     }
 
-    const refreshTokenMatches = await bcrypt.compare(refreshToken, user.refreshToken);
+    const refreshTokenMatches = await bcrypt.compare(
+      refreshToken,
+      user.refreshToken,
+    );
 
     if (!refreshTokenMatches) {
       throw new UnauthorizedException('Access Denied');
@@ -80,11 +96,14 @@ export class AuthService {
     return tokens;
   }
 
-  async updateRefreshToken(userId: number, refreshToken: string): Promise<void> {
+  async updateRefreshToken(
+    userId: number,
+    refreshToken: string,
+  ): Promise<void> {
     const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
     await this.prismaService.user.update({
       where: { id_user: userId },
-      data: { 
+      data: {
         refreshToken: hashedRefreshToken,
         refreshTokenExpiryTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
       },
@@ -95,7 +114,10 @@ export class AuthService {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         { sub: userId, email },
-        { secret: process.env.JWT_SECRET, expiresIn: process.env.JWT_EXPIRES_IN },
+        {
+          secret: process.env.JWT_SECRET,
+          expiresIn: process.env.JWT_EXPIRES_IN,
+        },
       ),
       this.jwtService.signAsync(
         { sub: userId, email },
