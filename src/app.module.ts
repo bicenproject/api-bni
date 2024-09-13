@@ -7,9 +7,11 @@ import { VendorModule } from './vendor/vendor.module';
 import { MenuModule } from './menu/menu.module';
 import { MerchantModule } from './merchant/merchant.module';
 import { AuditModule } from './audit/audit.module';
+import { IpController } from './ipAddress';
 
 @Module({
   imports: [UserModule, WilayahModule, PrismaModule, VendorModule, MenuModule, MerchantModule, AuditModule],
+  controllers: [IpController],
   providers: [PrismaService],
 })
 export class AppModule {}

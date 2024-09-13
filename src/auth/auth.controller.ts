@@ -72,7 +72,7 @@ export class AuthController {
       await this.authService.logout(userId);  
 
       // Clear cookies  
-      this.clearTokenCookies(res);  
+      this.clearTokenCookies(res);   
 
       await this.auditService.create({  
         Url: "/auth/logout",  
@@ -144,25 +144,33 @@ export class AuthController {
   }  
 
   private setTokenCookies(res: Response, accessToken: string, refreshToken: string) {  
-    res.cookie('accessToken', accessToken, {  
+    const isProduction = process.env.NODE_ENV === 'production';  
+    const cookieOptions = {  
       httpOnly: true,  
-      secure: process.env.NODE_ENV === 'production',  
-      sameSite: 'none' as const,  
-      maxAge: 15 * 60 * 1000,  
-    });  
-
+      secure: isProduction, // Only use 'secure: true' in production  
+      sameSite: isProduction ? 'none' as const : 'lax' as const,  
+      maxAge: 15 * 60 * 1000, // 15 minutes  
+    };  
+  
+    res.cookie('accessToken', accessToken, cookieOptions);  
     res.cookie('refreshToken', refreshToken, {  
-      httpOnly: true,  
-      secure: process.env.NODE_ENV === 'production',  
-      sameSite: 'strict',  
+      ...cookieOptions,  
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days  
     });  
   }  
 
   private clearTokenCookies(res: Response) {  
-    res.clearCookie('accessToken');  
-    res.clearCookie('refreshToken');  
-  }  
+    res.clearCookie('accessToken', {  
+      httpOnly: true,  
+      secure: true,  
+      sameSite: 'none'  
+    });  
+    res.clearCookie('refreshToken', {  
+      httpOnly: true,  
+      secure: true,  
+      sameSite: 'none'  
+    });  
+  }
 
 
   @UseGuards(JwtAuthGuard)  
