@@ -143,21 +143,21 @@ export class AuthController {
     return { isAuthenticated: true, user: { userId: user.userId, username: user.username } };  
   }  
 
-  private setTokenCookies(res: Response, accessToken: string, refreshToken: string) {  
-    const isProduction = process.env.NODE_ENV === 'production';  
-    const cookieOptions = {  
-      httpOnly: true,  
-      secure: isProduction, // Only use 'secure: true' in production  
-      sameSite: isProduction ? 'none' as const : 'lax' as const,  
-      maxAge: 15 * 60 * 1000, // 15 minutes  
-    };  
-  
-    res.cookie('accessToken', accessToken, cookieOptions);  
-    res.cookie('refreshToken', refreshToken, {  
-      ...cookieOptions,  
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days  
-    });  
-  }  
+ private setTokenCookies(res: Response, accessToken: string, refreshToken: string) {  
+  const isProduction = process.env.NODE_ENV === 'production';  
+  const cookieOptions = {  
+    httpOnly: true,  
+    secure: isProduction, // Only use 'secure: true' in production  
+    sameSite: isProduction ? 'none' as const : 'lax' as const,  
+    maxAge: 15 * 60 * 1000, // 15 minutes  
+  };  
+
+  res.cookie('accessToken', accessToken, cookieOptions);  
+  res.cookie('refreshToken', refreshToken, {  
+    ...cookieOptions,  
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days  
+  });  
+}  
 
   private clearTokenCookies(res: Response) {  
     res.clearCookie('accessToken', {  
