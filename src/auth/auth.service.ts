@@ -1,4 +1,6 @@
+
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -9,6 +11,7 @@ import { UserService } from '../user/user.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterUsersDto } from './dto/register.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -51,49 +54,76 @@ export class AuthService {
     };
   }
   
-  async register(createDto: RegisterUsersDto): Promise<any> {
-    const hashedPassword = await bcrypt.hash(createDto.password, 10);
+  async logout(userId: number): Promise<void> {  
+    try {  
+      const user = await this.prismaService.user.findUnique({  
+        where: { id_user: userId },  
+      });  
 
-    const user = await this.userService.createUser({
-      ...createDto,
-      password: hashedPassword,
-      created_by: 0, // You might want to set this differently
-      updated_by: 0, // You might want to set this differently
-      isVerified: false,
-      id_wilayah_vendor: 0, // You need to set this appropriately
-      vendor_type: '', // You need to set this appropriately
-      npp: '', // You need to set this appropriately
-      dob: new Date(), // You need to set this appropriately
-    });
+      if (!user) {  
+        throw new NotFoundException('User not found');  
+      }  
 
-    const tokens = await this.getTokens(user.id_user, user.email);
-    await this.updateRefreshToken(user.id_user, tokens.refreshToken);
+      await this.prismaService.user.update({  
+        where: { id_user: userId },  
+        data: {  
+          refreshToken: null,  
+          refreshTokenExpiryTime: null,  
+        },  
+      });  
+    } catch (error) {  
+      console.error('Error during logout:', error);  
+      throw new Error('Failed to logout user');  
+    }  
+  }  
 
-    return tokens;
-  }
+  async refreshTokens(userId: number, refreshToken: string): Promise<any> {  
+    const user = await this.prismaService.user.findUnique({  
+      where: { id_user: userId },  
+    });  
 
-  async refreshTokens(userId: number, refreshToken: string): Promise<any> {
-    const user = await this.prismaService.user.findUnique({
-      where: { id_user: userId },
-    });
-
-    if (!user || !user.refreshToken) {
-      throw new UnauthorizedException('Access Denied');
-    }
+    if (!user || !user.refreshToken) {  
+      throw new UnauthorizedException('Access Denied');  
+    }  
 
     const refreshTokenMatches = await bcrypt.compare(
       refreshToken,
-      user.refreshToken,
+      user.refreshToken
     );
 
     if (!refreshTokenMatches) {
       throw new UnauthorizedException('Access Denied');
     }
 
+    const tokens = await this.getTokens(user.id_user, user.email);  
+    await this.updateRefreshToken(user.id_user, tokens.refreshToken);  
+
+    return tokens;  
+  }  
+  
+  async register(createDto: RegisterUsersDto): Promise<any> {
+    const hashedPassword = await bcrypt.hash(createDto.password, 10);
+
+    const user = await this.userService.createUser({
+      ...createDto,
+      password: hashedPassword,
+      created_by: 0,
+      updated_by: 0,
+      isVerified: false,
+      id_wilayah_vendor: 0,
+      vendor_type: '',
+      npp: '',
+      dob: new Date(),
+    });
+
     const tokens = await this.getTokens(user.id_user, user.email);
     await this.updateRefreshToken(user.id_user, tokens.refreshToken);
 
-    return tokens;
+    return {
+      ...tokens,
+      userId: user.id_user,
+      username: user.username,
+    };
   }
 
   async updateRefreshToken(
@@ -130,4 +160,38 @@ export class AuthService {
       refreshToken,
     };
   }
+
+  async changePassword(userId: number, changePasswordDto: ChangePasswordDto): Promise<void> {  
+    const { currentPassword, newPassword, confirmNewPassword } = changePasswordDto;  
+
+    if (newPassword !== confirmNewPassword) {  
+      throw new BadRequestException('New password and confirmation do not match');  
+    }  
+
+    const user = await this.prismaService.user.findUnique({  
+      where: { id_user: userId },  
+      select: { password: true },  
+    });  
+
+    if (!user) {  
+      throw new UnauthorizedException('User not found');  
+    }  
+
+    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);  
+
+    if (!isPasswordValid) {  
+      throw new UnauthorizedException('Current password is incorrect');  
+    }  
+
+    if (currentPassword === newPassword) {  
+      throw new BadRequestException('New password must be different from the current password');  
+    }  
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);  
+
+    await this.prismaService.user.update({  
+      where: { id_user: userId },  
+      data: { password: hashedNewPassword },  
+    });  
+  }  
 }

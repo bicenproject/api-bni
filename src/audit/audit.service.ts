@@ -5,7 +5,7 @@ export class AuditService {
   constructor(private prisma: PrismaService) {}  
 
   async create(auditData: {  
-    Url: string;  // Use uppercase 'U' to match the Prisma model  
+    Url: string; 
     ActionName: string;  
     MenuName: string;  
     DataBefore: string;  
@@ -38,8 +38,12 @@ export class AuditService {
     });  
   }  
 
-  // Method to retrieve all logs  
-  async getAllLogs() {  
-    return this.prisma.auditTrail.findMany();  
-  }  
+   async getAllLogs() {  
+    return this.prisma.auditTrail.findMany({  
+      orderBy: {  
+        ActivityDate: 'desc',  
+      },  
+    });  
+
+  }
 }

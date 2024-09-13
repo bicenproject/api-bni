@@ -83,7 +83,7 @@ export class RoleService {
 
     return this.prisma.$transaction(async (prisma) => {  
       // Update the role  
-      const updatedRole = await prisma.role.update({  
+    const updatedRole = await prisma.role.update({  
         where: { id_role },  
         data: {  
           name: role.name,  

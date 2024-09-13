@@ -11,6 +11,22 @@ export class UserService {
     return this.prisma.user.findMany();
   }
 
+  async getUserWithRole(userId: number) {  
+    return this.prisma.user.findUnique({  
+      where: { id_user: userId },  
+      select: {  
+        id_user: true,  
+        username: true,  
+        email: true,  
+        role: {  
+          select: {  
+            name: true  
+          }  
+        }  
+      }  
+    });  
+  }  
+
   async createUser(data: CreateUserDto): Promise<User> {
     const { email, username, npp } = data;
 
