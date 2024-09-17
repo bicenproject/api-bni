@@ -1,45 +1,50 @@
-import { IsString, IsInt, IsOptional, IsEmail, IsDate, IsBoolean } from 'class-validator';  
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsOptional, IsString, IsEmail, IsDate, IsBoolean, IsInt } from 'class-validator';  
 
 export class CreateUserDto {  
-  @IsOptional()  
-  @IsInt()  
-  id_role?: number;  
-
-  @IsOptional()  
-  @IsInt()  
-  id_wilayah?: number;  
-
-  @IsOptional()  
-  @IsInt()  
-  id_vendor?: number;  
-
-  @IsInt()  
-  id_wilayah_vendor: number;  
-
-  @IsString()  
-  vendor_type: string;  
-
+  @IsNotEmpty()  
   @IsString()  
   username: string;  
 
+  @IsNotEmpty()  
   @IsEmail()  
   email: string;  
 
+  @IsNotEmpty()  
   @IsString()  
   npp: string;  
 
+  @IsNotEmpty()  
+  @Type(() => Date)  
   @IsDate()  
   dob: Date;  
 
+  @IsNotEmpty()  
   @IsString()  
   password: string;  
 
-  @IsInt()  
-  created_by: number;  
+  @IsOptional()  
+  id_role?: number; // Pastikan ini sesuai dengan tipe yang diharapkan  
 
-  @IsInt()  
-  updated_by: number;  
+  @IsInt()
+  @IsOptional()  
+  id_wilayah?: number;  
 
-  @IsBoolean()  
-  isVerified: boolean;  
-}  
+  @IsOptional()  
+  id_vendor?: number;  
+
+  @IsOptional()  
+  id_wilayah_vendor?: number;  
+
+  @IsOptional()  
+  vendor_type?: string;  
+
+  @IsOptional()  
+  created_by: number; // Pastikan ini sesuai dengan tipe yang diharapkan  
+
+  @IsOptional()  
+  updated_by: number; // Pastikan ini sesuai dengan tipe yang diharapkan  
+
+  @IsOptional()  
+  isVerified?: boolean; // Defaultnya false jika tidak diisi  
+}

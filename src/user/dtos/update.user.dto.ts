@@ -1,66 +1,46 @@
-import { IsString, IsInt, IsOptional, IsEmail, IsDate, IsBoolean } from 'class-validator';  
+import { Type } from 'class-transformer';
+import { IsOptional, IsString, IsEmail, IsDate, IsBoolean } from 'class-validator';  
 
 export class UpdateUserDto {  
-    @IsOptional()  
-    @IsInt()  
-    id_role?: number;  
+  @IsOptional()  
+  @IsString()  
+  username?: string;  
+
+  @IsOptional()  
+  @IsEmail()  
+  email?: string;  
+
+  @IsOptional()  
+  @IsString()  
+  npp?: string;  
+
+  @IsOptional()  
+  @Type(() => Date)  
+  @IsDate()  
+  dob?: Date; 
   
-    @IsOptional()  
-    @IsInt()  
-    id_wilayah?: number;  
-  
-    @IsOptional()  
-    @IsInt()  
-    id_vendor?: number;  
-  
-    @IsOptional()  
-    @IsInt()  
-    id_wilayah_vendor?: number;  
-  
-    @IsOptional()  
-    @IsString()  
-    vendor_type?: string;  
-  
-    @IsOptional()  
-    @IsString()  
-    username?: string;  
-  
-    @IsOptional()  
-    @IsEmail()  
-    email?: string;  
-  
-    @IsOptional()  
-    @IsString()  
-    npp?: string;  
-  
-    @IsOptional()  
-    @IsDate()  
-    dob?: Date;  
-  
-    @IsOptional()  
-    @IsString()  
-    password?: string;  
-  
-    @IsOptional()  
-    @IsString()  
-    token?: string;  
-  
-    @IsOptional()  
-    @IsString()  
-    refreshToken?: string;  
-  
-    @IsOptional()  
-    @IsDate()  
-    refreshTokenExpiryTime?: Date;  
-  
-    @IsOptional()  
-    @IsString()  
-    device_id?: string;  
-  
-    @IsInt()  
-    updated_by: number;  
-  
-    @IsOptional()  
-    @IsBoolean()  
-    isVerified?: boolean;  
-  }  
+  @IsOptional()  
+  @IsString()  
+  password?: string;  
+
+  @IsOptional()  
+  id_role?: number;  
+
+  @IsOptional()  
+  id_wilayah?: number;  
+
+  @IsOptional()  
+  id_vendor?: number;  
+
+  @IsOptional()  
+  id_wilayah_vendor?: number;  
+
+  @IsOptional()  
+  vendor_type?: string;  
+
+  @IsOptional()  
+  updated_by?: number; // Pastikan ini sesuai dengan tipe yang diharapkan  
+
+  @IsOptional()  
+  isVerified?: boolean; // Defaultnya false jika tidak diisi  
+}

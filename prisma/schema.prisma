@@ -13,17 +13,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
   id_user                Int       @id @default(autoincrement())
   role                   Role?     @relation(fields: [id_role], references: [id_role], onDelete: Cascade, onUpdate: Cascade)
-  id_role                Int?      
+  id_role                Int?
   wilayah                Wilayah?  @relation(fields: [id_wilayah], references: [id_wilayah], onDelete: Cascade, onUpdate: Cascade)
-  id_wilayah             Int?      
+  id_wilayah             Int?
   vendor                 Vendor?   @relation(fields: [id_vendor], references: [id_vendor], onDelete: Cascade, onUpdate: Cascade)
-  id_vendor              Int?      
+  id_vendor              Int?
   id_wilayah_vendor      Int?
-  vendor_type            String    @db.VarChar(255)
+  vendor_type            String?   @db.VarChar(255)
   username               String    @db.VarChar(255)
   email                  String    @unique @db.VarChar(255)
   npp                    String    @db.VarChar(255)
@@ -40,7 +39,6 @@ model User {
   deleted_at             DateTime? @db.DateTime
   isVerified             Boolean   @db.Bit
 }
-
 
 model Group_Wilayah {
   id_group   Int       @id @default(autoincrement())
@@ -66,12 +64,14 @@ model Vendor {
   deleted_at  DateTime? @default(now())
 
   User User[]
+
+  Inventory_EDC Inventory_EDC[]
 }
 
 model Wilayah {
   id_wilayah    Int            @id @default(autoincrement())
   group_wilayah Group_Wilayah? @relation(fields: [id_group], references: [id_group], onDelete: Cascade, onUpdate: Cascade)
-  id_group      Int?           
+  id_group      Int?
   name          String         @db.VarChar(255)
   code          String         @db.VarChar(255)
   description   String?        @db.Text
@@ -82,6 +82,8 @@ model Wilayah {
   deleted_at    DateTime?      @default(now())
 
   User User[]
+
+  Inventory_EDC Inventory_EDC[]
 }
 
 model Role {
@@ -105,9 +107,9 @@ model Role {
 model Role_Action {
   id_role_action Int          @id @default(autoincrement())
   role           Role?        @relation(fields: [id_role], references: [id_role], onDelete: Cascade, onUpdate: Cascade)
-  id_role        Int?         
+  id_role        Int?
   menu_action    Menu_Action? @relation(fields: [id_menu_action], references: [id_menu_action], onDelete: Cascade, onUpdate: Cascade)
-  id_menu_action Int?        
+  id_menu_action Int?
 }
 
 model Menu {
@@ -129,7 +131,7 @@ model Menu {
 model Menu_Action {
   id_menu_action Int       @id @default(autoincrement())
   menu           Menu?     @relation(fields: [id_menu], references: [id_menu], onDelete: Cascade, onUpdate: Cascade)
-  id_menu        Int?      
+  id_menu        Int?
   name           String    @db.VarChar(255)
   action         String    @db.VarChar(255)
   isActive       Boolean   @db.Bit
@@ -145,31 +147,29 @@ model Menu_Action {
 model Menu_Role {
   id_menu_role Int   @id @default(autoincrement())
   menu         Menu? @relation(fields: [id_menu], references: [id_menu], onDelete: Cascade, onUpdate: Cascade)
-  id_menu      Int?  
+  id_menu      Int?
   role         Role? @relation(fields: [id_role], references: [id_role], onDelete: Cascade, onUpdate: Cascade)
-  id_role      Int?  
+  id_role      Int?
 }
 
-
-model AuditTrail {  
-  id           Int      @id @default(autoincrement())  
-  Url          String   @db.VarChar(255)  
-  ActionName   String   @db.VarChar(255)  
-  MenuName     String   @db.VarChar(255)  
-  DataBefore   String   @db.Text  
-  DataAfter    String   @db.Text  
-  UserName     String   @db.VarChar(255)  
-  IpAddress    String   @db.VarChar(255)  
-  ActivityDate DateTime  
-  Browser      String   @db.VarChar(255)  
-  OS           String   @db.VarChar(255)  
-  AppSource    String   @db.VarChar(20)  
-  created_by    Int  
-  updated_by    Int  
-  created_at    DateTime @default(now())  
-  updated_at    DateTime @updatedAt  
+model AuditTrail {
+  id           Int      @id @default(autoincrement())
+  Url          String   @db.VarChar(255)
+  ActionName   String   @db.VarChar(255)
+  MenuName     String   @db.VarChar(255)
+  DataBefore   String   @db.Text
+  DataAfter    String   @db.Text
+  UserName     String   @db.VarChar(255)
+  IpAddress    String   @db.VarChar(255)
+  ActivityDate DateTime
+  Browser      String   @db.VarChar(255)
+  OS           String   @db.VarChar(255)
+  AppSource    String   @db.VarChar(20)
+  created_by   Int
+  updated_by   Int
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
 }
-
 
 model Merchant {
   id_merchant  Int       @id @default(autoincrement())
@@ -190,4 +190,69 @@ model Merchant {
   created_at   DateTime  @default(now())
   updated_at   DateTime  @default(now())
   deleted_at   DateTime? @db.DateTime()
+
+  Merchant_Maintenance Merchant_Maintenance[]
+
+  Inventory_EDC Inventory_EDC[]
 }
+
+model Merchant_Maintenance {
+  id_merchant_maintenance Int       @id @default(autoincrement())
+  merchant                Merchant? @relation(fields: [id_merchant], references: [id_merchant], onDelete: Cascade, onUpdate: Cascade)
+  id_merchant             Int?
+  value_before            String    @db.NVarChar(MAX)
+  value_after             String    @db.NVarChar(MAX)
+  status                  String    @db.VarChar(255)
+  approved_by             Int?
+  rejected_by             Int?
+  reason                  String?   @db.Text
+  created_by              Int
+  updated_by              Int
+  created_at              DateTime  @default(now())
+  updated_at              DateTime  @default(now())
+}
+
+model Inventory_EDC {
+  id_inventory_edc Int  @id @default(autoincrement())
+  id_wilayah       Int?
+  id_vendor        Int?
+  id_merchant      Int?
+
+  // Define the relations  
+  wilayah  Wilayah?  @relation(fields: [id_wilayah], references: [id_wilayah], onDelete: Cascade, onUpdate: Cascade)
+  vendor   Vendor?   @relation(fields: [id_vendor], references: [id_vendor], onDelete: Cascade, onUpdate: Cascade)
+  merchant Merchant? @relation(fields: [id_merchant], references: [id_merchant], onDelete: Cascade, onUpdate: Cascade)
+
+  mid              String    @db.VarChar(255)
+  tid              String    @db.VarChar(255)
+  merk_edc         String    @db.VarChar(255)
+  type_edc         String    @db.VarChar(255)
+  serial_number    String    @db.VarChar(255)
+  status_owner     String    @db.VarChar(255)
+  kondisi_mesin    String    @db.VarChar(255)
+  kelengkapan      String    @db.VarChar(255)
+  jenis_kerusakan  String    @db.VarChar(255)
+  penggunaan       String    @db.Text
+  tempat           String    @db.Text
+  scope            String    @db.VarChar(255)
+  status           String    @db.VarChar(255)
+  tanggal_masuk    DateTime  @db.Date
+  provider_simcard String    @db.VarChar(255)
+  no_simcard       String    @db.VarChar(255)
+  created_by       Int
+  updated_by       Int
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @updatedAt
+  deleted_at       DateTime? @db.DateTime
+}
+
+model Staging {  
+  id_staging  Int       @id @default(autoincrement())  
+  name        String    @db.VarChar(255)  
+  staging     Int  
+  description String?   @db.Text  
+  created_by  Int  
+  updated_by  Int  
+  created_at  DateTime  
+  updated_at  DateTime  
+}  
